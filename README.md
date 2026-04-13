@@ -1,20 +1,25 @@
-# Reminders App
+# Orbit Reminders
 
-A lightweight reminders board you can open directly in the browser.
+Orbit is a browser-based reminders and planning app heavily inspired by Things 3 for Mac.
 
-## Features
+## Included features
 
-- Add reminders with a due date, priority, and notes
-- Keep reminders in local storage between sessions
-- Filter by all, today, upcoming, or completed
-- Search across reminder titles and notes
+- Inbox, Today, Upcoming, Anytime, Someday, and Logbook views
+- Areas and Projects in the sidebar
+- Project headings for structuring to-dos
+- To-dos with notes, tags, reminders, deadlines, and scheduled dates
+- Repeating to-dos with automatic next-instance generation on completion
+- Checklist items inside each to-do
+- Evening flag for later-in-the-day tasks
+- Quick Add with lightweight natural language parsing
+- Quick Find across areas, projects, to-dos, notes, and tags
+- Calendar-style event panel beside date-based planning views
+- Local persistence with seeded demo data
 
 ## Run locally
 
-Open `index.html` in a browser.
+Open [index.html](./index.html) in a modern browser.
 
-## Files
+## Notes
 
-- `index.html` for the app structure
-- `styles.css` for layout and styling
-- `script.js` for reminder state, filters, and persistence
+This is a static front-end app built with HTML, CSS, and vanilla JavaScript, so it does not depend on a build step.

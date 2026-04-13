@@ -3,125 +3,283 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Reminders App</title>
+    <title>Orbit Reminders</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <main class="layout">
-      <section class="composer-panel" aria-labelledby="app-title">
-        <div class="heading-block">
-          <p class="kicker">Daily Rhythm</p>
-          <h1 id="app-title">Reminders</h1>
-          <p class="intro">
-            Capture what matters, decide when it needs attention, and keep the
-            day from getting slippery.
-          </p>
+    <div class="shell">
+      <aside class="sidebar">
+        <div class="brand-block">
+          <p class="eyebrow">Focused Planning</p>
+          <h1>Orbit</h1>
+          <p class="brand-copy">What matters now, next, and eventually.</p>
         </div>
 
-        <form id="reminder-form" class="reminder-form">
-          <label class="field field-full">
-            <span>Reminder</span>
-            <input
-              id="title-input"
-              name="title"
-              type="text"
-              maxlength="120"
-              placeholder="Submit expense report"
-              required
-            />
-          </label>
+        <section class="sidebar-section">
+          <h2>Lists</h2>
+          <nav class="nav-list" aria-label="Primary views">
+            <button class="nav-item active" data-view="inbox" type="button">
+              <span>Inbox</span>
+              <strong id="count-inbox">0</strong>
+            </button>
+            <button class="nav-item" data-view="today" type="button">
+              <span>Today</span>
+              <strong id="count-today">0</strong>
+            </button>
+            <button class="nav-item" data-view="upcoming" type="button">
+              <span>Upcoming</span>
+              <strong id="count-upcoming">0</strong>
+            </button>
+            <button class="nav-item" data-view="anytime" type="button">
+              <span>Anytime</span>
+              <strong id="count-anytime">0</strong>
+            </button>
+            <button class="nav-item" data-view="someday" type="button">
+              <span>Someday</span>
+              <strong id="count-someday">0</strong>
+            </button>
+            <button class="nav-item" data-view="logbook" type="button">
+              <span>Logbook</span>
+              <strong id="count-logbook">0</strong>
+            </button>
+          </nav>
+        </section>
 
-          <label class="field">
-            <span>Due date</span>
-            <input id="date-input" name="dueDate" type="date" />
-          </label>
-
-          <label class="field">
-            <span>Priority</span>
-            <select id="priority-input" name="priority">
-              <option value="high">High</option>
-              <option value="medium" selected>Medium</option>
-              <option value="low">Low</option>
-            </select>
-          </label>
-
-          <label class="field field-full">
-            <span>Notes</span>
-            <textarea
-              id="notes-input"
-              name="notes"
-              rows="4"
-              maxlength="240"
-              placeholder="Send it before lunch so approvals can land today."
-            ></textarea>
-          </label>
-
-          <div class="form-actions">
-            <button type="submit" class="primary-button">Add reminder</button>
-            <p class="status-text" id="status-text" aria-live="polite">
-              Nothing waiting yet.
-            </p>
+        <section class="sidebar-section">
+          <div class="section-title-row">
+            <h2>Areas</h2>
+            <button class="mini-button" id="new-area-button" type="button">
+              New
+            </button>
           </div>
-        </form>
-      </section>
+          <div id="areas-list" class="stack-list"></div>
+        </section>
 
-      <section class="board-panel" aria-labelledby="board-title">
-        <div class="board-header">
+        <section class="sidebar-section">
+          <div class="section-title-row">
+            <h2>Projects</h2>
+            <button class="mini-button" id="new-project-button" type="button">
+              New
+            </button>
+          </div>
+          <div id="projects-list" class="stack-list"></div>
+        </section>
+
+        <section class="sidebar-section">
+          <div class="section-title-row">
+            <h2>Tags</h2>
+          </div>
+          <div id="tags-list" class="tag-cloud"></div>
+        </section>
+      </aside>
+
+      <main class="workspace">
+        <header class="topbar">
           <div>
-            <p class="kicker">Overview</p>
-            <h2 id="board-title">Reminder Board</h2>
-          </div>
-          <div class="summary-strip" aria-live="polite">
-            <div class="summary-item">
-              <span class="summary-label">Open</span>
-              <strong id="open-count">0</strong>
-            </div>
-            <div class="summary-item">
-              <span class="summary-label">Due today</span>
-              <strong id="today-count">0</strong>
-            </div>
-            <div class="summary-item">
-              <span class="summary-label">Completed</span>
-              <strong id="done-count">0</strong>
-            </div>
-          </div>
-        </div>
-
-        <div class="toolbar" aria-label="Reminder filters">
-          <div class="filter-group" role="tablist" aria-label="View filter">
-            <button class="filter-chip active" data-filter="all" type="button">
-              All
-            </button>
-            <button class="filter-chip" data-filter="today" type="button">
-              Today
-            </button>
-            <button class="filter-chip" data-filter="upcoming" type="button">
-              Upcoming
-            </button>
-            <button class="filter-chip" data-filter="done" type="button">
-              Done
-            </button>
+            <p class="eyebrow" id="view-eyebrow">Today</p>
+            <h2 id="view-title">Today</h2>
           </div>
 
-          <label class="search-field">
-            <span class="visually-hidden">Search reminders</span>
+          <div class="topbar-actions">
+            <button class="ghost-button" id="quick-find-button" type="button">
+              Quick Find
+            </button>
+            <button class="ghost-button" id="seed-button" type="button">
+              Reset Demo
+            </button>
+          </div>
+        </header>
+
+        <section class="capture-bar">
+          <form id="quick-add-form" class="capture-form">
             <input
-              id="search-input"
-              type="search"
-              placeholder="Search reminders"
+              id="quick-add-input"
+              type="text"
+              placeholder='Quick add: "Submit deck tomorrow 3pm #Work @Today !high"'
+              aria-label="Quick add a to-do"
             />
-          </label>
-        </div>
+            <button type="submit" class="primary-button">Add</button>
+          </form>
+          <p class="hint-text" id="status-text" aria-live="polite">
+            Ready when you are.
+          </p>
+        </section>
 
-        <ul id="reminder-list" class="reminder-list" aria-live="polite"></ul>
-      </section>
-    </main>
+        <section class="content-grid">
+          <div class="list-column">
+            <div class="toolbar">
+              <div class="toolbar-filters">
+                <button class="filter-chip active" data-list-filter="all" type="button">
+                  All
+                </button>
+                <button class="filter-chip" data-list-filter="open" type="button">
+                  Open
+                </button>
+                <button class="filter-chip" data-list-filter="scheduled" type="button">
+                  Scheduled
+                </button>
+                <button class="filter-chip" data-list-filter="flagged" type="button">
+                  Evening
+                </button>
+              </div>
+              <label class="search-field">
+                <span class="visually-hidden">Filter visible items</span>
+                <input id="list-search-input" type="search" placeholder="Filter this view" />
+              </label>
+            </div>
+
+            <section id="calendar-panel" class="calendar-panel" hidden>
+              <div class="panel-heading">
+                <h3>Calendar</h3>
+                <p>Events sit beside scheduled work so the day reads clearly.</p>
+              </div>
+              <div id="calendar-events" class="calendar-events"></div>
+            </section>
+
+            <div id="list-content" class="list-content"></div>
+          </div>
+
+          <aside class="detail-column">
+            <div id="empty-detail" class="detail-empty">
+              <h3>Select something</h3>
+              <p>
+                Choose a to-do, project, or area to edit notes, dates, tags,
+                repeating rules, and checklist details.
+              </p>
+            </div>
+
+            <form id="detail-form" class="detail-form" hidden>
+              <div class="detail-header">
+                <p class="eyebrow" id="detail-kind">To-Do</p>
+                <button class="ghost-button" id="delete-item-button" type="button">
+                  Delete
+                </button>
+              </div>
+
+              <label class="field">
+                <span>Title</span>
+                <input id="detail-title" type="text" maxlength="120" />
+              </label>
+
+              <label class="field">
+                <span>Notes</span>
+                <textarea id="detail-notes" rows="5" maxlength="600"></textarea>
+              </label>
+
+              <div class="field-grid">
+                <label class="field">
+                  <span>List</span>
+                  <select id="detail-list">
+                    <option value="inbox">Inbox</option>
+                    <option value="today">Today</option>
+                    <option value="upcoming">Upcoming</option>
+                    <option value="anytime">Anytime</option>
+                    <option value="someday">Someday</option>
+                  </select>
+                </label>
+
+                <label class="field">
+                  <span>Area</span>
+                  <select id="detail-area"></select>
+                </label>
+
+                <label class="field">
+                  <span>Project</span>
+                  <select id="detail-project"></select>
+                </label>
+
+                <label class="field">
+                  <span>Heading</span>
+                  <select id="detail-heading"></select>
+                </label>
+              </div>
+
+              <div class="field-grid">
+                <label class="field">
+                  <span>When</span>
+                  <input id="detail-when" type="date" />
+                </label>
+
+                <label class="field">
+                  <span>Deadline</span>
+                  <input id="detail-deadline" type="date" />
+                </label>
+
+                <label class="field">
+                  <span>Reminder</span>
+                  <input id="detail-reminder" type="datetime-local" />
+                </label>
+
+                <label class="field">
+                  <span>Repeat</span>
+                  <select id="detail-repeat">
+                    <option value="none">No repeat</option>
+                    <option value="daily">Daily</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="monthly">Monthly</option>
+                    <option value="yearly">Yearly</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="field-grid compact-grid">
+                <label class="field">
+                  <span>Tags</span>
+                  <input id="detail-tags" type="text" placeholder="work, finance" />
+                </label>
+
+                <label class="checkbox-field">
+                  <input id="detail-evening" type="checkbox" />
+                  <span>Evening</span>
+                </label>
+
+                <label class="checkbox-field">
+                  <input id="detail-complete" type="checkbox" />
+                  <span>Completed</span>
+                </label>
+              </div>
+
+              <section class="checklist-panel">
+                <div class="panel-heading inline">
+                  <h3>Checklist</h3>
+                  <button id="add-checklist-item-button" class="mini-button" type="button">
+                    Add item
+                  </button>
+                </div>
+                <div id="checklist-editor" class="checklist-editor"></div>
+              </section>
+
+              <div class="detail-actions">
+                <button type="submit" class="primary-button">Save changes</button>
+              </div>
+            </form>
+          </aside>
+        </section>
+      </main>
+    </div>
+
+    <dialog id="quick-find-dialog" class="quick-find-dialog">
+      <form method="dialog" class="quick-find-shell">
+        <div class="panel-heading inline">
+          <div>
+            <h3>Quick Find</h3>
+            <p>Search to-dos, projects, areas, notes, and tags.</p>
+          </div>
+          <button class="ghost-button" value="cancel">Close</button>
+        </div>
+        <label class="search-field search-field-wide">
+          <span class="visually-hidden">Search everywhere</span>
+          <input id="quick-find-input" type="search" placeholder="Start typing" />
+        </label>
+        <div id="quick-find-results" class="quick-find-results"></div>
+      </form>
+    </dialog>
 
     <template id="empty-state-template">
-      <li class="empty-state">
-        <h3>No reminders match this view.</h3>
-        <p>Try a different filter or add something new above.</p>
-      </li>
+      <section class="empty-state">
+        <h3>No items here yet.</h3>
+        <p>Add something above, or switch to another list.</p>
+      </section>
     </template>
 
     <script src="script.js"></script>
