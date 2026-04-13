@@ -14,7 +14,7 @@ Orbit is a browser-based reminders and planning app heavily inspired by Things 3
 - Quick Add with lightweight natural language parsing
 - Quick Find across areas, projects, to-dos, notes, and tags
 - Calendar-style event panel beside date-based planning views
-- Local persistence with seeded demo data
+- Local persistence with a clean first-launch workspace
 
 ## Run locally
 

@@ -1,7 +1,5 @@
 const STORAGE_KEY = "orbit-things-inspired-state-v1";
 
-const DEFAULT_STATE = createSeedState();
-
 const elements = {
   navButtons: Array.from(document.querySelectorAll(".nav-item")),
   areaContainer: document.getElementById("areas-list"),
@@ -70,172 +68,11 @@ function createSeedState() {
   };
 }
 
-function seedDemoState() {
-  const workId = makeId("area");
-  const personalId = makeId("area");
-  const launchId = makeId("project");
-  const homeId = makeId("project");
-  const headingResearch = makeId("heading");
-  const headingPrep = makeId("heading");
-  const today = getTodayString();
-  const tomorrow = addDays(today, 1);
-  const inThree = addDays(today, 3);
-
-  return {
-    view: { type: "today", id: null },
-    listFilter: "all",
-    listSearch: "",
-    areas: [
-      { id: workId, title: "Work", notes: "Planning, launches, and follow-through." },
-      { id: personalId, title: "Personal", notes: "Life admin and the human stuff." },
-    ],
-    projects: [
-      {
-        id: launchId,
-        title: "Spring launch",
-        areaId: workId,
-        notes: "Everything needed to get the release over the line.",
-        status: "active",
-        when: today,
-        deadline: inThree,
-        tags: ["launch", "team"],
-        headings: [
-          { id: headingResearch, title: "Prep" },
-          { id: headingPrep, title: "Release day" },
-        ],
-      },
-      {
-        id: homeId,
-        title: "Apartment reset",
-        areaId: personalId,
-        notes: "Small upgrades that make home feel more deliberate.",
-        status: "active",
-        when: tomorrow,
-        deadline: "",
-        tags: ["home"],
-        headings: [],
-      },
-    ],
-    tasks: [
-      {
-        id: makeId("task"),
-        title: "Send launch notes to design",
-        notes: "Confirm the final screenshots and link targets.",
-        list: "today",
-        areaId: workId,
-        projectId: launchId,
-        headingId: headingResearch,
-        when: today,
-        deadline: inThree,
-        reminderAt: `${today}T09:30`,
-        repeat: "none",
-        tags: ["launch", "design"],
-        evening: false,
-        completedAt: "",
-        checklist: [
-          { id: makeId("check"), title: "Attach final copy", completed: true },
-          { id: makeId("check"), title: "Include mobile screenshots", completed: false },
-        ],
-      },
-      {
-        id: makeId("task"),
-        title: "Rehearse stakeholder demo",
-        notes: "One full run with timing and backup slides.",
-        list: "today",
-        areaId: workId,
-        projectId: launchId,
-        headingId: headingPrep,
-        when: today,
-        deadline: "",
-        reminderAt: `${today}T16:00`,
-        repeat: "weekly",
-        tags: ["demo"],
-        evening: true,
-        completedAt: "",
-        checklist: [],
-      },
-      {
-        id: makeId("task"),
-        title: "Book electrician",
-        notes: "Ask about hallway dimmer and kitchen pendant install.",
-        list: "upcoming",
-        areaId: personalId,
-        projectId: homeId,
-        headingId: "",
-        when: tomorrow,
-        deadline: "",
-        reminderAt: "",
-        repeat: "none",
-        tags: ["home"],
-        evening: false,
-        completedAt: "",
-        checklist: [],
-      },
-      {
-        id: makeId("task"),
-        title: "Collect receipts for tax folder",
-        notes: "",
-        list: "anytime",
-        areaId: personalId,
-        projectId: "",
-        headingId: "",
-        when: "",
-        deadline: "",
-        reminderAt: "",
-        repeat: "monthly",
-        tags: ["finance"],
-        evening: false,
-        completedAt: "",
-        checklist: [],
-      },
-      {
-        id: makeId("task"),
-        title: "Ideas for summer trip",
-        notes: "Lisbon, Quebec City, or somewhere with good late sunsets.",
-        list: "someday",
-        areaId: personalId,
-        projectId: "",
-        headingId: "",
-        when: "",
-        deadline: "",
-        reminderAt: "",
-        repeat: "none",
-        tags: ["travel"],
-        evening: false,
-        completedAt: "",
-        checklist: [],
-      },
-      {
-        id: makeId("task"),
-        title: "Archive resolved QA tickets",
-        notes: "",
-        list: "today",
-        areaId: workId,
-        projectId: launchId,
-        headingId: headingPrep,
-        when: today,
-        deadline: "",
-        reminderAt: "",
-        repeat: "daily",
-        tags: ["ops"],
-        evening: false,
-        completedAt: new Date().toISOString(),
-        checklist: [],
-      },
-    ],
-    calendarEvents: [
-      { id: makeId("event"), date: today, time: "11:00", title: "Design review" },
-      { id: makeId("event"), date: today, time: "14:00", title: "Product sync" },
-      { id: makeId("event"), date: tomorrow, time: "08:30", title: "Gym" },
-    ],
-  };
-}
-
 function loadState() {
   try {
     const saved = window.localStorage.getItem(STORAGE_KEY);
     if (!saved) {
-      return seedDemoState();
+      return createSeedState();
     }
 
     const parsed = JSON.parse(saved);
@@ -248,7 +85,7 @@ function loadState() {
       calendarEvents: parsed.calendarEvents || [],
     };
   } catch (error) {
-    return seedDemoState();
+    return createSeedState();
   }
 }
 
@@ -1528,9 +1365,9 @@ elements.quickFindInput.addEventListener("input", (event) => {
 elements.newAreaButton.addEventListener("click", addArea);
 elements.newProjectButton.addEventListener("click", addProject);
 elements.seedButton.addEventListener("click", () => {
-  state = seedDemoState();
+  state = createSeedState();
   selectedEntity = null;
-  saveAndRender("Reset the demo workspace.");
+  saveAndRender("Cleared the workspace.");
 });
 
 window.addEventListener("keydown", (event) => {
@@ -1545,4 +1382,4 @@ window.addEventListener("keydown", (event) => {
 window.setInterval(checkReminders, 30 * 1000);
 
 render();
-setStatus("Loaded your planner.");
+setStatus("Your planner is ready.");
