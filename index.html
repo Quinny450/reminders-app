@@ -3,20 +3,19 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Orbit Reminders</title>
+    <title>Reminders</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <div class="shell">
       <aside class="sidebar">
         <div class="brand-block">
-          <p class="eyebrow">Focused Planning</p>
-          <h1>Orbit</h1>
-          <p class="brand-copy">What matters now, next, and eventually.</p>
+          <p class="eyebrow">Lists</p>
+          <h1>Reminders</h1>
         </div>
 
         <section class="sidebar-section">
-          <h2>Lists</h2>
+          <h2>Tasks</h2>
           <nav class="nav-list" aria-label="Primary views">
             <button class="nav-item active" data-view="inbox" type="button">
               <span>Inbox</span>
@@ -76,16 +75,16 @@
       <main class="workspace">
         <header class="topbar">
           <div>
-            <p class="eyebrow" id="view-eyebrow">Today</p>
+            <p class="eyebrow" id="view-eyebrow">List</p>
             <h2 id="view-title">Today</h2>
           </div>
 
           <div class="topbar-actions">
-            <button class="ghost-button" id="quick-find-button" type="button">
-              Quick Find
-            </button>
             <button class="ghost-button" id="seed-button" type="button">
               Clear Workspace
+            </button>
+            <button class="ghost-button" id="quick-find-button" type="button">
+              Quick Find
             </button>
           </div>
         </header>
@@ -95,14 +94,12 @@
             <input
               id="quick-add-input"
               type="text"
-              placeholder='Quick add: "Submit deck tomorrow 3pm #Work @Today !high"'
+              placeholder="New To-Do"
               aria-label="Quick add a to-do"
             />
-            <button type="submit" class="primary-button">Add</button>
+            <button type="submit" class="primary-button">New To-Do</button>
           </form>
-          <p class="hint-text" id="status-text" aria-live="polite">
-            Ready when you are.
-          </p>
+          <p class="hint-text" id="status-text" aria-live="polite"></p>
         </section>
 
         <section class="content-grid">
@@ -119,19 +116,18 @@
                   Scheduled
                 </button>
                 <button class="filter-chip" data-list-filter="flagged" type="button">
-                  Evening
+                  This Evening
                 </button>
               </div>
               <label class="search-field">
                 <span class="visually-hidden">Filter visible items</span>
-                <input id="list-search-input" type="search" placeholder="Filter this view" />
+                <input id="list-search-input" type="search" placeholder="Search" />
               </label>
             </div>
 
             <section id="calendar-panel" class="calendar-panel" hidden>
               <div class="panel-heading">
                 <h3>Calendar</h3>
-                <p>Events sit beside scheduled work so the day reads clearly.</p>
               </div>
               <div id="calendar-events" class="calendar-events"></div>
             </section>
@@ -141,11 +137,8 @@
 
           <aside class="detail-column">
             <div id="empty-detail" class="detail-empty">
-              <h3>Select something</h3>
-              <p>
-                Choose a to-do, project, or area to edit notes, dates, tags,
-                repeating rules, and checklist details.
-              </p>
+              <h3>No Selection</h3>
+              <p>Select a to-do, project, or area.</p>
             </div>
 
             <form id="detail-form" class="detail-form" hidden>

@@ -1,6 +1,6 @@
-# Orbit Reminders
+# Reminders
 
-Orbit is a browser-based reminders and planning app heavily inspired by Things 3 for Mac.
+A browser-based reminders and planning app heavily inspired by Things 3 for Mac.
 
 ## Included features
 

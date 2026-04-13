@@ -58,10 +58,7 @@ function createSeedState() {
     view: { type: "today", id: null },
     listFilter: "all",
     listSearch: "",
-    areas: [
-      { id: makeId("area"), title: "Work", notes: "Client, planning, and delivery." },
-      { id: makeId("area"), title: "Personal", notes: "Home, health, and family." },
-    ],
+    areas: [],
     projects: [],
     tasks: [],
     calendarEvents: [],
@@ -528,13 +525,6 @@ function renderCalendarPanel(tasks) {
     const events = state.calendarEvents.filter((event) => event.date === date);
     day.innerHTML = `<h4>${escapeHtml(formatDate(date))}</h4>`;
 
-    if (!events.length) {
-      const quiet = document.createElement("p");
-      quiet.className = "item-meta";
-      quiet.textContent = "No calendar events";
-      day.append(quiet);
-    }
-
     events.forEach((event) => {
       const row = document.createElement("div");
       row.className = "calendar-event";
@@ -590,78 +580,68 @@ function renderTaskCard(task) {
 
   const project = getProjectById(task.projectId);
   const area = getAreaById(task.areaId);
-
-  const checklistPreview = task.checklist.length
-    ? `<div class="checklist-preview"><span class="check-chip">${
-        task.checklist.filter((item) => item.completed).length
-      }/${task.checklist.length} checklist</span></div>`
-    : "";
+  const secondaryBits = [
+    project?.title || "",
+    area?.title || "",
+    task.evening ? "This Evening" : "",
+    task.repeat !== "none" ? `Repeats ${task.repeat}` : "",
+  ].filter(Boolean);
+  const timingLabel =
+    (state.view.type === "today" && isPast(task.deadline) && task.deadline
+      ? `Overdue ${formatDate(task.deadline)}`
+      : task.when
+        ? formatDate(task.when)
+        : task.deadline
+          ? `Deadline ${formatDate(task.deadline)}`
+          : task.reminderAt
+            ? formatDateTime(task.reminderAt)
+            : "") || "";
 
   card.innerHTML = `
     <div class="task-header">
-      <div class="task-title-row">
-        <input class="complete-toggle" data-action="toggle-complete" data-id="${escapeHtml(
-          task.id
-        )}" type="checkbox" ${isCompleted(task) ? "checked" : ""} />
-        <div>
-          <h4 class="task-title">${escapeHtml(task.title)}</h4>
-          ${
-            task.notes
-              ? `<p class="task-notes">${escapeHtml(task.notes.slice(0, 150))}</p>`
-              : ""
-          }
+      <div class="task-main">
+        <div class="task-title-row">
+          <input class="complete-toggle" data-action="toggle-complete" data-id="${escapeHtml(
+            task.id
+          )}" type="checkbox" ${isCompleted(task) ? "checked" : ""} />
+          <div>
+            <h4 class="task-title">${escapeHtml(task.title)}</h4>
+            ${
+              secondaryBits.length
+                ? `<div class="meta-row">${secondaryBits
+                    .map((bit) => `<span class="meta-chip">${escapeHtml(bit)}</span>`)
+                    .join("")}</div>`
+                : ""
+            }
+          </div>
         </div>
       </div>
-      <button class="action-button" data-action="open" data-id="${escapeHtml(task.id)}" type="button">
-        Edit
-      </button>
-    </div>
-    <div class="meta-row">
-      <span class="meta-chip">${escapeHtml(labelForList(task))}</span>
-      ${
-        task.when ? `<span class="meta-chip">${escapeHtml(formatDate(task.when))}</span>` : ""
-      }
-      ${
-        task.deadline
-          ? `<span class="meta-chip deadline">Deadline ${escapeHtml(
-              formatDate(task.deadline)
-            )}</span>`
-          : ""
-      }
-      ${
-        task.reminderAt
-          ? `<span class="meta-chip reminder">${escapeHtml(
-              formatDateTime(task.reminderAt)
-            )}</span>`
-          : ""
-      }
-      ${
-        task.repeat !== "none"
-          ? `<span class="meta-chip repeat">Repeats ${escapeHtml(task.repeat)}</span>`
-          : ""
-      }
-      ${task.evening ? '<span class="meta-chip">This evening</span>' : ""}
-      ${project ? `<span class="meta-chip">${escapeHtml(project.title)}</span>` : ""}
-      ${area ? `<span class="meta-chip">${escapeHtml(area.title)}</span>` : ""}
+      <div class="task-side">
+        ${timingLabel ? `<span class="task-when">${escapeHtml(timingLabel)}</span>` : ""}
+      </div>
     </div>
     ${
-      task.tags.length
+      isSelected && task.notes
+        ? `<p class="task-notes">${escapeHtml(task.notes.slice(0, 220))}</p>`
+        : ""
+    }
+    ${
+      isSelected && task.tags.length
         ? `<div class="tag-row">${task.tags
             .map((tag) => `<span class="tag-chip">#${escapeHtml(tag)}</span>`)
             .join("")}</div>`
         : ""
     }
-    ${checklistPreview}
+    ${
+      isSelected && task.checklist.length
+        ? `<div class="checklist-preview"><span class="check-chip">${
+            task.checklist.filter((item) => item.completed).length
+          }/${task.checklist.length} checklist items</span></div>`
+        : ""
+    }
   `;
 
   return card;
-}
-
-function labelForList(task) {
-  if (state.view.type === "today" && isPast(task.deadline)) {
-    return "Overdue";
-  }
-  return task.list.charAt(0).toUpperCase() + task.list.slice(1);
 }
 
 function renderDetail() {
@@ -843,6 +823,22 @@ function renderAreaSummary(area) {
   `;
 }
 
+function getTaskQuickMeta(task) {
+  if (isCompleted(task)) {
+    return "Logbook";
+  }
+
+  if (task.deadline && isPast(task.deadline)) {
+    return "Overdue";
+  }
+
+  if (task.when) {
+    return formatDate(task.when);
+  }
+
+  return task.list.charAt(0).toUpperCase() + task.list.slice(1);
+}
+
 function renderQuickFindResults(query = "") {
   const normalized = query.trim().toLowerCase();
   const corpus = [
@@ -851,7 +847,7 @@ function renderQuickFindResults(query = "") {
       id: task.id,
       title: task.title,
       text: `${task.title} ${task.notes} ${task.tags.join(" ")}`,
-      meta: [labelForList(task), ...(task.tags || []).map((tag) => `#${tag}`)],
+      meta: [getTaskQuickMeta(task), ...(task.tags || []).map((tag) => `#${tag}`)],
     })),
     ...state.projects.map((project) => ({
       kind: "project",
@@ -998,7 +994,7 @@ function checkReminders() {
       !task.reminderDeliveredAt
     ) {
       new Notification(task.title, {
-        body: task.notes || "Reminder from Orbit",
+        body: task.notes || "Reminder",
       });
       task.reminderDeliveredAt = new Date().toISOString();
       saveState();
@@ -1285,12 +1281,6 @@ elements.listContent.addEventListener("click", (event) => {
     return;
   }
 
-  const editButton = event.target.closest("[data-action='open']");
-  if (editButton) {
-    selectEntity("task", editButton.dataset.id);
-    return;
-  }
-
   const card = event.target.closest(".task-card");
   if (card) {
     selectEntity("task", card.dataset.id);
@@ -1382,4 +1372,4 @@ window.addEventListener("keydown", (event) => {
 window.setInterval(checkReminders, 30 * 1000);
 
 render();
-setStatus("Your planner is ready.");
+setStatus("");
